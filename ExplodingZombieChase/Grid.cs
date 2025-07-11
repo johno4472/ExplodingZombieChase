@@ -45,10 +45,10 @@ namespace ExplodingZombieChase
             return this;
         }
 
-        public Grid PlaceAllPieces(double percentZombies = 0.02, double percentBarriers = 0.1)
+        public Grid PlaceAllPieces(double percentZombies = 0, double percentBarriers = 0.1)
         {
-            GridMap[0][0].Status = CHARACTER;
-            GridMap[GridMap.Count - 1][GridMap[0].Count - 1].Status = ESCAPE;
+            GridMap[0][0].PieceType = CHARACTER;
+            GridMap[GridMap.Count - 1][GridMap[0].Count - 1].PieceType = ESCAPE;
             double randomNumber;
             for (int i = 2; i < GridMap.Count - 1; i++)
             {
@@ -57,16 +57,19 @@ namespace ExplodingZombieChase
                     randomNumber = ChanceToPlace.NextDouble();
                     if (randomNumber <= percentBarriers)
                     {
-                        GridMap[i][j].Status = BARRIER;
+                        GridMap[i][j].PieceType = BARRIER;
                     }
                     else if (randomNumber <= percentBarriers + percentZombies)
                     {
-                        Zombie zombie = new Zombie(i, j);
+                        /*Zombie zombie = new Zombie(i, j);
                         ZombieList.Add(zombie);
-                        GridMap[i][j].Status = ZOMBIE;
+                        GridMap[i][j].PieceType = ZOMBIE;*/
                     }
                 }
             }
+            GridMap[12][17].PieceType = ZOMBIE;
+            Zombie zombie = new Zombie(12, 17);
+            ZombieList.Add(zombie);
             return this;
         }
 
@@ -100,7 +103,7 @@ namespace ExplodingZombieChase
                         spacing = "";
                     }
                     GridSquare square = GridMap[i][j];
-                    int status = square.Status;
+                    int status = square.PieceType;
                     if (status == OPEN || status == OPENANDDEAD)
                     {
                         Console.ForegroundColor = rowShade;
@@ -167,19 +170,19 @@ namespace ExplodingZombieChase
                 return;
             }
             GridSquare square = GridMap[row][column];
-            if (square.Status == OPEN)
+            if (square.PieceType == OPEN)
             {
-                GridMap[Character.row][Character.column].Status = OPEN;
+                GridMap[Character.row][Character.column].PieceType = OPEN;
                 Character.row = row;
                 Character.column = column;
-                GridMap[row][column].Status = CHARACTER;
+                GridMap[row][column].PieceType = CHARACTER;
             }
-            else if (square.Status == BARRIER)
+            else if (square.PieceType == BARRIER)
             {
                 Console.WriteLine("You cannot move into a barrier. Try again");
                 ResetTurn = true;
             }
-            else if (square.Status == ZOMBIE)
+            else if (square.PieceType == ZOMBIE)
             {
                 Console.WriteLine("You've hit a zombie! You died and your guts exploded everywhere");
                 ResetTurn = true;
@@ -190,7 +193,7 @@ namespace ExplodingZombieChase
         public void MoveZombie(Zombie zombie)
         {
             int row = zombie.row;
-            int column = zombie.row;
+            int column = zombie.column;
             int rowDifference = Character.row - row;
             int colDifference = Character.column - column;
             if (rowDifference < 0)
@@ -213,36 +216,36 @@ namespace ExplodingZombieChase
             {
                 return;
             }
-            switch (GridMap[row][column].Status)
+            switch (GridMap[row][column].PieceType)
             {
                 case OPEN:
-                    GridMap[zombie.row][zombie.column].Status = OPEN;
+                    GridMap[zombie.row][zombie.column].PieceType = OPEN;
                     zombie. row = row;
                     zombie. column = column;
-                    GridMap[row][column].Status = ZOMBIE;
+                    GridMap[row][column].PieceType = ZOMBIE;
                     break;
                 case BARRIER:
                     break;
                 case ZOMBIE:
-                    GridMap[zombie.row][zombie.column].Status = OPEN;
+                    GridMap[zombie.row][zombie.column].PieceType = OPEN;
                     FindAndKillZombie(row, column);
                     zombie.row = row;
                     zombie.column = column;
                     zombie.isAlive = false;
-                    GridMap[zombie.row][zombie.column].Status = OPENANDDEAD;
+                    GridMap[zombie.row][zombie.column].PieceType = OPENANDDEAD;
                     break;
                 case OPENANDDEAD:
-                    GridMap[zombie.row][zombie.column].Status = OPEN;
+                    GridMap[zombie.row][zombie.column].PieceType = OPEN;
                     zombie.row = row;
                     zombie.column = column;
-                    GridMap[row][column].Status = ZOMBIE;
+                    GridMap[row][column].PieceType = ZOMBIE;
                     break;
                 case CHARACTER:
-                    GridMap[zombie.row][zombie.column].Status = OPEN;
+                    GridMap[zombie.row][zombie.column].PieceType = OPEN;
                     FindAndKillZombie(row, column);
                     zombie.row = row;
                     zombie.column = column;
-                    GridMap[row][column].Status = ZOMBIEANDKILLED;
+                    GridMap[row][column].PieceType = ZOMBIEANDKILLED;
                     break;
             }
 
@@ -276,9 +279,9 @@ namespace ExplodingZombieChase
         /*
         public void ExploreSquare(int row, int column)
         {
-            if (IsValidCoord(row, column) && GridMap[row][column].Status == UNEXPLORED)
+            if (IsValidCoord(row, column) && GridMap[row][column].PieceType == UNEXPLORED)
             {
-                GridMap[row][column].Status = EXPLORED;
+                GridMap[row][column].PieceType = EXPLORED;
                 if (GridMap[row][column].IsBomb)
                 {
                     GameLost = true;
@@ -301,7 +304,7 @@ namespace ExplodingZombieChase
 
         public Grid? MarkSquare(int exploreOrFlag, int row, int column)
         {
-            if (GridMap[row][column].Status == EXPLORED)
+            if (GridMap[row][column].PieceType == EXPLORED)
             {
                 Console.WriteLine($"Square at row {row}, column {column} is already explored. Try again");
                 return this;
@@ -324,11 +327,11 @@ namespace ExplodingZombieChase
             {
                 for (int j = 0; j < GridMap[i].Count; j++)
                 {
-                    if (GridMap[i][j].Status == UNEXPLORED)
+                    if (GridMap[i][j].PieceType == UNEXPLORED)
                     {
                         return false;
                     }
-                    else if (GridMap[i][j].Status == FLAGGED & !GridMap[i][j].IsBomb)
+                    else if (GridMap[i][j].PieceType == FLAGGED & !GridMap[i][j].IsBomb)
                     {
                         return false;
                     }
