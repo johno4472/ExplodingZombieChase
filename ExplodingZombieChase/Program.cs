@@ -35,6 +35,8 @@ while (true)
             break;
     }
     game.MoveCharacter(rowMove, colMove);
+    game.DisplayGrid();
+    game.MoveAllZombies();
 }
 
 

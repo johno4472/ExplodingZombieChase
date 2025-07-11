@@ -10,8 +10,6 @@ namespace ExplodingZombieChase
     {
         public int row;
         public int column;
-        public const int OPEN = 0;
-        public const int CHARACTER = 1;
 
         public Player(int row, int column)
         {

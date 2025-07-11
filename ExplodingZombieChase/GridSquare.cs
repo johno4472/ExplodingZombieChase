@@ -9,7 +9,7 @@ namespace ExplodingZombieChase
     public class GridSquare
     {
 
-        //0 - empty, 1 - character present, 2 - block, 3 - zombie; all set to empty
+        //0 - empty, 1 - character present, 2 - block, 3 - zombie, 4- escape, 5 - open and dead, 6 - open and killed; all set to empty
         public int Status { get; set; } = 0;
     }
 }

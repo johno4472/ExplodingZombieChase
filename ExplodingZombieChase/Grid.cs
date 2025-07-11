@@ -16,6 +16,8 @@ namespace ExplodingZombieChase
         public const int BARRIER = 2;
         public const int ZOMBIE = 3;
         public const int ESCAPE = 4;
+        public const int OPENANDDEAD = 5;
+        public const int ZOMBIEANDKILLED = 6;
         public bool GameLost = false;
         public bool ResetTurn = false;
         public List<Zombie> ZombieList = [];
@@ -43,7 +45,7 @@ namespace ExplodingZombieChase
             return this;
         }
 
-        public Grid PlaceAllPieces(double percentZombies = 0.1, double percentBarriers = 0.1)
+        public Grid PlaceAllPieces(double percentZombies = 0.02, double percentBarriers = 0.1)
         {
             GridMap[0][0].Status = CHARACTER;
             GridMap[GridMap.Count - 1][GridMap[0].Count - 1].Status = ESCAPE;
@@ -99,7 +101,7 @@ namespace ExplodingZombieChase
                     }
                     GridSquare square = GridMap[i][j];
                     int status = square.Status;
-                    if (status == OPEN)
+                    if (status == OPEN || status == OPENANDDEAD)
                     {
                         Console.ForegroundColor = rowShade;
                         Console.Write($" {spacing}");
@@ -117,7 +119,7 @@ namespace ExplodingZombieChase
                         Console.Write($"*{spacing}");
                         Console.ResetColor();
                     }
-                    else if (status == CHARACTER)
+                    else if (status == CHARACTER || status == ZOMBIEANDKILLED)
                     {
                         Console.ForegroundColor = ConsoleColor.DarkBlue;
                         Console.Write($"P{spacing}");
@@ -182,6 +184,93 @@ namespace ExplodingZombieChase
                 Console.WriteLine("You've hit a zombie! You died and your guts exploded everywhere");
                 ResetTurn = true;
                 GameLost = true;
+            }
+        }
+
+        public void MoveZombie(Zombie zombie)
+        {
+            int row = zombie.row;
+            int column = zombie.row;
+            int rowDifference = Character.row - row;
+            int colDifference = Character.column - column;
+            if (rowDifference < 0)
+            {
+                row--;
+            }
+            else if (rowDifference > 0)
+            {
+                row++;
+            }
+            if (colDifference < 0)
+            {
+                column--;
+            }
+            else if (colDifference > 0)
+            {
+                column++;
+            }
+            if (!IsValidCoord(row, column))
+            {
+                return;
+            }
+            switch (GridMap[row][column].Status)
+            {
+                case OPEN:
+                    GridMap[zombie.row][zombie.column].Status = OPEN;
+                    zombie. row = row;
+                    zombie. column = column;
+                    GridMap[row][column].Status = ZOMBIE;
+                    break;
+                case BARRIER:
+                    break;
+                case ZOMBIE:
+                    GridMap[zombie.row][zombie.column].Status = OPEN;
+                    FindAndKillZombie(row, column);
+                    zombie.row = row;
+                    zombie.column = column;
+                    zombie.isAlive = false;
+                    GridMap[zombie.row][zombie.column].Status = OPENANDDEAD;
+                    break;
+                case OPENANDDEAD:
+                    GridMap[zombie.row][zombie.column].Status = OPEN;
+                    zombie.row = row;
+                    zombie.column = column;
+                    GridMap[row][column].Status = ZOMBIE;
+                    break;
+                case CHARACTER:
+                    GridMap[zombie.row][zombie.column].Status = OPEN;
+                    FindAndKillZombie(row, column);
+                    zombie.row = row;
+                    zombie.column = column;
+                    GridMap[row][column].Status = ZOMBIEANDKILLED;
+                    break;
+            }
+
+        }
+
+        public void MoveAllZombies()
+        {
+            Zombie zombie;
+            for (int i = 0; i < ZombieList.Count; i++)
+            {
+                zombie = ZombieList[i];
+                if (zombie.isAlive)
+                {
+                    MoveZombie(zombie);
+                }
+            }
+        }
+
+        public void FindAndKillZombie(int row, int column)
+        {
+            for (int i = 0; i < ZombieList.Count; i++)
+            {
+                Zombie zombie = ZombieList[i];
+                if (zombie.row == row && zombie.column == column)
+                {
+                    zombie.isAlive = false;
+                    return;
+                }
             }
         }
         /*
