@@ -29,7 +29,7 @@ namespace ExplodingZombieChase
             ChanceToPlace = new Random();
             InitializeGrid(rows, columns);
             PlaceAllPieces(percentZombies, percentBarriers);
-            Character = new Player(0, 0);
+            Character = new Player(11, 0);
         }
 
         public Grid InitializeGrid(int rows = 14, int columns = 18)
@@ -47,7 +47,7 @@ namespace ExplodingZombieChase
 
         public Grid PlaceAllPieces(double percentZombies = 0, double percentBarriers = 0.1)
         {
-            GridMap[0][0].PieceType = CHARACTER;
+            
             GridMap[GridMap.Count - 1][GridMap[0].Count - 1].PieceType = ESCAPE;
             double randomNumber;
             for (int i = 2; i < GridMap.Count - 1; i++)
@@ -67,8 +67,12 @@ namespace ExplodingZombieChase
                     }
                 }
             }
+            GridMap[11][0].PieceType = CHARACTER;
             GridMap[12][17].PieceType = ZOMBIE;
             Zombie zombie = new Zombie(12, 17);
+            ZombieList.Add(zombie);
+            GridMap[10][17].PieceType = ZOMBIE;
+            zombie = new Zombie(10, 17);
             ZombieList.Add(zombie);
             return this;
         }
@@ -104,7 +108,7 @@ namespace ExplodingZombieChase
                     }
                     GridSquare square = GridMap[i][j];
                     int status = square.PieceType;
-                    if (status == OPEN || status == OPENANDDEAD)
+                    if (status == OPEN)
                     {
                         Console.ForegroundColor = rowShade;
                         Console.Write($" {spacing}");
@@ -122,7 +126,13 @@ namespace ExplodingZombieChase
                         Console.Write($"*{spacing}");
                         Console.ResetColor();
                     }
-                    else if (status == CHARACTER || status == ZOMBIEANDKILLED)
+                    else if (status == OPENANDDEAD)
+                    {
+                        Console.BackgroundColor = ConsoleColor.Yellow;
+                        Console.Write($" {spacing}");
+                        Console.ResetColor();      
+                    }
+                    else if (status == CHARACTER)
                     {
                         Console.ForegroundColor = ConsoleColor.DarkBlue;
                         Console.Write($"P{spacing}");
@@ -232,7 +242,7 @@ namespace ExplodingZombieChase
                     zombie.row = row;
                     zombie.column = column;
                     zombie.isAlive = false;
-                    GridMap[zombie.row][zombie.column].PieceType = OPENANDDEAD;
+                    GridMap[row][column].PieceType = OPENANDDEAD;
                     break;
                 case OPENANDDEAD:
                     GridMap[zombie.row][zombie.column].PieceType = OPEN;
