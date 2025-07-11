@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,7 +19,7 @@ namespace ExplodingZombieChase
         public bool GameLost = false;
         public bool ResetTurn = false;
         public List<Zombie> ZombieList = [];
-        public Player? Player1;
+        public Player Character;
         
         public Grid(int rows, int columns, double percentZombies, double percentBarriers)
         {
@@ -26,6 +27,7 @@ namespace ExplodingZombieChase
             ChanceToPlace = new Random();
             InitializeGrid(rows, columns);
             PlaceAllPieces(percentZombies, percentBarriers);
+            Character = new Player(0, 0);
         }
 
         public Grid InitializeGrid(int rows = 14, int columns = 18)
@@ -44,7 +46,6 @@ namespace ExplodingZombieChase
         public Grid PlaceAllPieces(double percentZombies = 0.1, double percentBarriers = 0.1)
         {
             GridMap[0][0].Status = CHARACTER;
-            Player1 = new Player(0, 0);
             GridMap[GridMap.Count - 1][GridMap[0].Count - 1].Status = ESCAPE;
             double randomNumber;
             for (int i = 2; i < GridMap.Count - 1; i++)
@@ -67,9 +68,9 @@ namespace ExplodingZombieChase
             return this;
         }
 
-        public bool IsValidCoord(int rowNum, int colNum, int rowModifier = 1, int colModifier = 1)
+        public bool IsValidCoord(int rowNum, int colNum)
         {
-            if (rowNum < 0 || rowNum >= GridMap.Count || colNum < 0 || colNum >= GridMap[0].Count || (rowModifier == 0 && colModifier == 0))
+            if (rowNum < 0 || rowNum >= GridMap.Count || colNum < 0 || colNum >= GridMap[0].Count)
             {
                 return false;
             }
@@ -82,19 +83,19 @@ namespace ExplodingZombieChase
             Console.Write("  ");
             for (int i = 0; i < GridMap[0].Count; i++)
             {
-               Console.Write("___");
+               Console.Write("__");
             }
             Console.WriteLine("_");
             var rowShade = ConsoleColor.DarkGreen;
             for (int i = 0; i < GridMap.Count; i++)
             {
-                Console.Write("  | ");
-                string spacing = "  ";
+                Console.Write("  |");
+                string spacing = " ";
                 for (int j = 0; j < GridMap[i].Count; j++)
                 {
                     if (j == GridMap[i].Count - 1)
                     {
-                        spacing = " ";
+                        spacing = "";
                     }
                     GridSquare square = GridMap[i][j];
                     int status = square.Status;
@@ -133,18 +134,55 @@ namespace ExplodingZombieChase
                         throw new Exception("Somehow square has a status out of range");
                     }
                 }
-                Console.WriteLine($"| ");
+                Console.WriteLine($"|");
             }
             Console.Write("  |");
+            bool writeSecondCharacter = true;
             for (int i = 0; i < GridMap[0].Count; i++)
             {
-                Console.Write("\u0304\u0304\u0304");
+                Console.Write("\u0304");
                 if (i == GridMap[0].Count - 1)
                 {
-                    Console.Write("|\n     ");
+                    writeSecondCharacter = false;
+                    Console.Write("|\n");
+                }
+                if (writeSecondCharacter)
+                { 
+                    Console.Write("\u0304");
                 }
             }
             Console.WriteLine();
+        }
+
+        public void MoveCharacter(int rowMove, int colMove)
+        {
+            int row = Character.row + rowMove;
+            int column = Character.column + colMove;
+            if (!IsValidCoord(row, column))
+            {
+                Console.WriteLine("You have tried to move out of bounds. Try again");
+                ResetTurn = true;
+                return;
+            }
+            GridSquare square = GridMap[row][column];
+            if (square.Status == OPEN)
+            {
+                GridMap[Character.row][Character.column].Status = OPEN;
+                Character.row = row;
+                Character.column = column;
+                GridMap[row][column].Status = CHARACTER;
+            }
+            else if (square.Status == BARRIER)
+            {
+                Console.WriteLine("You cannot move into a barrier. Try again");
+                ResetTurn = true;
+            }
+            else if (square.Status == ZOMBIE)
+            {
+                Console.WriteLine("You've hit a zombie! You died and your guts exploded everywhere");
+                ResetTurn = true;
+                GameLost = true;
+            }
         }
         /*
         public void ExploreSquare(int row, int column)
