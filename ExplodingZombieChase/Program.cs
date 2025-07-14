@@ -1,4 +1,5 @@
 ﻿// See https://aka.ms/new-console-template for more information
+using System.ComponentModel.Design;
 using ExplodingZombieChase;
 
 Console.ResetColor();
@@ -20,152 +21,172 @@ string instructions = "Here's how Exploding Zombie Chase works:\n" +
 
 Console.WriteLine(instructions);
 
-Console.WriteLine("Do you want to customize the game (c) or play default (d)?");
-int numRows = 14;
-int numCols = 18;
-double zombieDensity = .1;
-double barrierDensity = .2;
-string response;
-bool beginGameplay = false;
-string customizeResponse = Console.ReadLine() ?? "";
-switch (customizeResponse)
-{
-    case "d":
-        Console.WriteLine("Playing default gameplay");
-        break;
-    case "c":
-        while (true)
-        {
-            Console.WriteLine($"Your game setup has:\nRows: {numRows}\nColumns: {numCols}\nZombie density: {zombieDensity}\nBarrier density: {barrierDensity}");
-            Console.WriteLine("Do you want to play with those settings? (y) or customize something? (r, c, z, or b)");
-            response = Console.ReadLine() ?? "";
-            try
-            {
-                switch (response)
-                {
-                    case "y":
-                        beginGameplay = true;
-                        break;
-                    case "r":
-                        Console.WriteLine("How many rows do you want? (5-50)");
-                        numRows = Convert.ToInt32(Console.ReadLine());
-                        break;
-                    case "c":
-                        Console.WriteLine("How many rows do you want? (5-30)");
-                        numCols = Convert.ToInt32(Console.ReadLine());
-                        break;
-                    case "z":
-                        Console.WriteLine("What zombie density do you want? (0-1)");
-                        zombieDensity = Convert.ToDouble(Console.ReadLine());
-                        break;
-                    case "b":
-                        Console.WriteLine("What barrier density do you want? (0-1)");
-                        barrierDensity = Convert.ToDouble(Console.ReadLine());
-                        break;
-                    default:
-                        Console.WriteLine("Invalid response. Type only one of the following: y, r, c, z, b");
-                        Thread.Sleep(500);
-                        break;
-                }
-            }
-            catch
-            {
-                Console.WriteLine("You gave an invalide numerical response. Look at the limits and try again");
-            }
-            if (beginGameplay)
-            {
-                break;
-            }
-            
-
-        }
-        break;
-    default:
-        Console.WriteLine("No valid answer given so we're setting you up with default settings");
-        break;
-}
-
-Grid game = new Grid(numRows, numCols, zombieDensity, barrierDensity);
-string moveResponse = "";
-int rowMove;
-int colMove;
-game.DisplayGrid();
-bool leaveGame = false;
 
 while (true)
 {
-    game.ResetTurn = false;
-    Console.WriteLine("Your move?");
-    moveResponse = Console.ReadLine() ?? "";
-    rowMove = 0;
-    colMove = 0;
-    switch (moveResponse)
+    Console.WriteLine("Do you want to customize the game (c) or play default (d)?");
+    int numRows = 14;
+    int numCols = 18;
+    double zombieDensity = .2;
+    double barrierDensity = .25;
+    string response;
+    bool beginGameplay = false;
+    string customizeResponse = Console.ReadLine() ?? "";
+    switch (customizeResponse)
     {
-        case "w":
-            rowMove = -1;
-            break;
-        case "s":
-            rowMove = 1;
-            break;
-        case "a":
-            colMove = -1;
-            break;
         case "d":
-            colMove = 1;
+            Console.WriteLine("Playing default gameplay");
             break;
-        case "":
-            break;
-        case "q":
-            leaveGame = true;
-            break;
-        case "i":
+        case "c":
+            while (true)
+            {
+                Console.WriteLine($"Your game setup has:\nRows: {numRows}\nColumns: {numCols}\nZombie density: {zombieDensity}\nBarrier density: {barrierDensity}");
+                Console.WriteLine("Do you want to play with those settings? (y) or customize something? (r, c, z, or b)");
+                response = Console.ReadLine() ?? "";
+                try
+                {
+                    switch (response)
+                    {
+                        case "y":
+                            beginGameplay = true;
+                            break;
+                        case "r":
+                            Console.WriteLine("How many rows do you want? (5-50)");
+                            numRows = Convert.ToInt32(Console.ReadLine());
+                            break;
+                        case "c":
+                            Console.WriteLine("How many rows do you want? (5-30)");
+                            numCols = Convert.ToInt32(Console.ReadLine());
+                            break;
+                        case "z":
+                            Console.WriteLine("What zombie density do you want? (0-1)");
+                            zombieDensity = Convert.ToDouble(Console.ReadLine());
+                            break;
+                        case "b":
+                            Console.WriteLine("What barrier density do you want? (0-1)");
+                            barrierDensity = Convert.ToDouble(Console.ReadLine());
+                            break;
+                        default:
+                            Console.WriteLine("Invalid response. Type only one of the following: y, r, c, z, b");
+                            Thread.Sleep(500);
+                            break;
+                    }
+                }
+                catch
+                {
+                    Console.WriteLine("You gave an invalide numerical response. Look at the limits and try again");
+                }
+                if (beginGameplay)
+                {
+                    break;
+                }
 
+
+            }
+            break;
         default:
-            Console.WriteLine("Invalid entry. Enter w, a, s, d, or (just hit enter).");
-            game.ResetTurn = true;
-            Thread.Sleep(1000);
+            Console.WriteLine("No valid answer given so we're setting you up with default settings");
             break;
     }
-    if (leaveGame)
+
+    Grid game = new Grid(numRows, numCols, zombieDensity, barrierDensity);
+    string moveResponse = "";
+    int rowMove;
+    int colMove;
+    game.DisplayGrid();
+    bool leaveGame = false;
+
+    while (true)
     {
-        Console.WriteLine("Leaving game now");
-        Thread.Sleep(1000);
-        break;
-    }
-    if (!game.ResetTurn)
-    {
-        game.MoveCharacter(rowMove, colMove);
-        game.DisplayGrid();
-        if (game.GameWon)
+        game.ResetTurn = false;
+        Console.WriteLine("Your move?");
+        moveResponse = Console.ReadLine() ?? "";
+        rowMove = 0;
+        colMove = 0;
+        switch (moveResponse)
         {
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("You have successfully escaped!");
-            Thread.Sleep(1000);
-            Console.ResetColor();
-            break;
-        } 
-        else if (game.GameLost)
+            case "w":
+                rowMove = -1;
+                break;
+            case "s":
+                rowMove = 1;
+                break;
+            case "a":
+                colMove = -1;
+                break;
+            case "d":
+                colMove = 1;
+                break;
+            case "":
+                break;
+            case "q":
+                leaveGame = true;
+                break;
+            case "i":
+
+            default:
+                Console.WriteLine("Invalid entry. Enter w, a, s, d, or (just hit enter).");
+                game.ResetTurn = true;
+                Thread.Sleep(1000);
+                break;
+        }
+        if (leaveGame)
         {
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine("You've hit a zombie! You died and your guts exploded everywhere");
+            Console.WriteLine("Leaving game now");
             Thread.Sleep(1000);
-            Console.ResetColor();
             break;
         }
         if (!game.ResetTurn)
         {
-            game.MoveAllZombies();
+            game.MoveCharacter(rowMove, colMove);
             game.DisplayGrid();
+            if (game.GameWon)
+            {
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("You have successfully escaped!");
+                Thread.Sleep(1000);
+                Console.ResetColor();
+                break;
+            }
+            else if (game.GameLost)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("You've hit a zombie! You died and your guts exploded everywhere");
+                Thread.Sleep(1000);
+                Console.ResetColor();
+                break;
+            }
+            if (!game.ResetTurn)
+            {
+                game.MoveAllZombies();
+                game.DisplayGrid();
+            }
+            if (game.GameLost)
+            {
+                Console.WriteLine("You've hit a zombie! You died and your guts exploded everywhere");
+                Thread.Sleep(1000);
+                break;
+            }
         }
-        if (game.GameLost)
-        {
-            Console.WriteLine("You've hit a zombie! You died and your guts exploded everywhere");
-            Thread.Sleep(1000);
-            break;
-        }
+
     }
-    
+    Console.WriteLine("Want to play again? y/n");
+    string playAgain = Console.ReadLine() ?? "";
+    if (playAgain == "y")
+    {
+        Console.WriteLine("Okay let's give it another go!");
+    }
+    else if (playAgain == "n")
+    {
+        Console.WriteLine("Got it. Shutting down now");
+        break;
+    }
+    else
+    {
+        Console.WriteLine("Didn't give an appropriate answer, so I'll take that as a yes");
+    }
 }
+
 
 
 

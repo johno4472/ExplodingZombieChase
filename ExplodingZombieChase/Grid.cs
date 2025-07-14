@@ -65,7 +65,7 @@ namespace ExplodingZombieChase
                     }
                     else if (randomNumber <= percentZombies + percentBarriers)
                     {
-                        if (i <= 4 || j <= 4)
+                        if (i <= 4 && j <= 4)
                         {
                             continue;
                         }
@@ -76,6 +76,9 @@ namespace ExplodingZombieChase
                 }
             }
             GridMap[0][0].PieceType = CHARACTER;
+            GridMap[2][2].PieceType = BARRIER;
+            GridMap[1][2].PieceType = BARRIER;
+            GridMap[2][1].PieceType = BARRIER;
             return this;
         }
 
