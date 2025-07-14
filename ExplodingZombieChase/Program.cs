@@ -4,6 +4,22 @@ using ExplodingZombieChase;
 Console.ResetColor();
 Console.WriteLine("Hello, World!");
 
+string instructions = "Here's how Exploding Zombie Chase works:\n" +
+    "You wake up in a sketchy warehouse somewhere, and just need to make your way to the escape hatch at the opposite corner.\n" +
+    "There's just one problem...\n\nZombies!!\n\n" +
+    "Between you and the hatch are multiple zombies that can sense your every move, and move closer to you every second.\n" +
+    "Your disadvantage: You can only move up horizontally or vertically, and zombies can move diagonally.\n" +
+    "Your advantage: You know exactly what the zombies will do. And this is how:\n" +
+    "- Zombies will ALWAYS try to move diagonally in your direction, unless you are exactly in line with them vertically\n " +
+    "  or horizontally, in that case they will move one space in your direction\n" +
+    "- That means that if a barrier stands between the zombie's path to you, it will stand there and wait until the \n" +
+    "  path to you no longer is on the other side of a barrier\n" +
+    "- Also, these are exploding zombies! If two zombies collide on their way to you, they explode!\n" +
+    "\n See if you can survive the zombies, and get them to explode so they open up a path to safety!\n" +
+    "Basic controls are:\nw - up\na - left\nd - right\ns - down\nq - quit.\n\nBest of luck to you!";
+
+Console.WriteLine(instructions);
+
 Console.WriteLine("Do you want to customize the game (c) or play default (d)?");
 int numRows = 14;
 int numCols = 18;
@@ -11,7 +27,7 @@ double zombieDensity = .1;
 double barrierDensity = .2;
 string response;
 bool beginGameplay = false;
-string customizeResponse = Console.ReadLine();
+string customizeResponse = Console.ReadLine() ?? "";
 switch (customizeResponse)
 {
     case "d":
@@ -102,6 +118,8 @@ while (true)
         case "q":
             leaveGame = true;
             break;
+        case "i":
+
         default:
             Console.WriteLine("Invalid entry. Enter w, a, s, d, or (just hit enter).");
             game.ResetTurn = true;
