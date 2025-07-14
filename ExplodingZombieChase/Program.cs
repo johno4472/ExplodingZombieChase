@@ -42,14 +42,18 @@ while (true)
         game.DisplayGrid();
         if (game.GameWon)
         {
+            Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("You have successfully escaped!");
             Thread.Sleep(1000);
+            Console.ResetColor();
             break;
         } 
         else if (game.GameLost)
         {
+            Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine("You've hit a zombie! You died and your guts exploded everywhere");
             Thread.Sleep(1000);
+            Console.ResetColor();
             break;
         }
             game.MoveAllZombies();
