@@ -194,6 +194,7 @@ namespace ExplodingZombieChase
             if (!IsValidCoord(row, column))
             {
                 Console.WriteLine("You have tried to move out of bounds. Try again");
+                Thread.Sleep(1000);
                 ResetTurn = true;
                 return;
             }
@@ -208,17 +209,18 @@ namespace ExplodingZombieChase
             else if (square.PieceType == BARRIER)
             {
                 Console.WriteLine("You cannot move into a barrier. Try again");
+                Thread.Sleep(1000);
                 ResetTurn = true;
             }
             else if (square.PieceType == ZOMBIE)
             {
                 Console.WriteLine("You've hit a zombie! You died and your guts exploded everywhere");
+                Thread.Sleep(1000);
                 ResetTurn = true;
                 GameLost = true;
             }
             else if (square.PieceType == ESCAPE)
             {
-                Console.WriteLine("You have successfully escaped!");
                 GridMap[Character.row][Character.column].PieceType = OPEN;
                 GameWon = true;
                 Character.row = row;

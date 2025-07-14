@@ -11,6 +11,7 @@ int colMove;
 
 while (true)
 {
+    game.ResetTurn = false;
     game.DisplayGrid();
     Console.WriteLine("Your move?");
     moveResponse = Console.ReadLine() ?? "";
@@ -32,11 +33,22 @@ while (true)
             break;
         default:
             Console.WriteLine("Invalid entry. Enter w, a, s, or d");
+            Thread.Sleep(1000);
             break;
     }
-    game.MoveCharacter(rowMove, colMove);
-    game.DisplayGrid();
-    game.MoveAllZombies();
+    if (!game.ResetTurn)
+    {
+        game.MoveCharacter(rowMove, colMove);
+        game.DisplayGrid();
+        if (game.GameWon)
+        {
+            Console.WriteLine("You have successfully escaped!");
+            Thread.Sleep(1000);
+            break;
+        }
+        game.MoveAllZombies();
+    }
+    
 }
 
 
