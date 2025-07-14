@@ -214,10 +214,11 @@ namespace ExplodingZombieChase
             }
             else if (square.PieceType == ZOMBIE)
             {
-                Console.WriteLine("You've hit a zombie! You died and your guts exploded everywhere");
-                Thread.Sleep(1000);
-                ResetTurn = true;
                 GameLost = true;
+                GridMap[Character.row][Character.column].PieceType = OPEN;
+                Character.row = row;
+                Character.column = column;
+                GridMap[row][column].PieceType = ZOMBIEANDPLAYERKILLED;
             }
             else if (square.PieceType == ESCAPE)
             {
@@ -300,10 +301,10 @@ namespace ExplodingZombieChase
                     GridMap[row][column].PieceType = ZOMBIEANDDEAD;
                     break;
                 case CHARACTER:
-                    FindAndKillZombie(row, column);
                     zombie.row = row;
                     zombie.column = column;
                     GridMap[row][column].PieceType = ZOMBIEANDPLAYERKILLED;
+                    GameLost = true;
                     break;
             }
 

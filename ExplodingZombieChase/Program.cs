@@ -8,11 +8,11 @@ Grid game = new Grid(14, 18, .01, .2);
 string moveResponse = "";
 int rowMove;
 int colMove;
+game.DisplayGrid();
 
 while (true)
 {
     game.ResetTurn = false;
-    game.DisplayGrid();
     Console.WriteLine("Your move?");
     moveResponse = Console.ReadLine() ?? "";
     rowMove = 0;
@@ -45,8 +45,21 @@ while (true)
             Console.WriteLine("You have successfully escaped!");
             Thread.Sleep(1000);
             break;
+        } 
+        else if (game.GameLost)
+        {
+            Console.WriteLine("You've hit a zombie! You died and your guts exploded everywhere");
+            Thread.Sleep(1000);
+            break;
         }
-        game.MoveAllZombies();
+            game.MoveAllZombies();
+            game.DisplayGrid();
+        if (game.GameLost)
+        {
+            Console.WriteLine("You've hit a zombie! You died and your guts exploded everywhere");
+            Thread.Sleep(1000);
+            break;
+        }
     }
     
 }
