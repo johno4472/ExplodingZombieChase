@@ -22,6 +22,7 @@ namespace ExplodingZombieChase
         public const int JUSTDIEDANDWILLDIE = 8;
         public bool GameLost = false;
         public bool ResetTurn = false;
+        public bool GameWon = false;
         public List<Zombie> ZombieList = [];
         public Player Character;
         
@@ -96,6 +97,7 @@ namespace ExplodingZombieChase
                Console.Write("__");
             }
             Console.WriteLine("_");
+            string characterOrEmpty = " ";
             var rowShade = ConsoleColor.DarkGreen;
             for (int i = 0; i < GridMap.Count; i++)
             {
@@ -145,7 +147,13 @@ namespace ExplodingZombieChase
                             break;
                         case ESCAPE:
                             Console.BackgroundColor = ConsoleColor.DarkBlue;
-                            Console.Write($" {spacing}");
+                            if (GameWon)
+                            {
+                                Console.BackgroundColor = ConsoleColor.Green;
+                                Console.ForegroundColor = ConsoleColor.Blue;
+                                characterOrEmpty = "P";
+                            }
+                            Console.Write($"{characterOrEmpty}{spacing}");
                             Console.ResetColor();
                             break;
                         case ZOMBIEANDPLAYERKILLED:
@@ -207,6 +215,14 @@ namespace ExplodingZombieChase
                 Console.WriteLine("You've hit a zombie! You died and your guts exploded everywhere");
                 ResetTurn = true;
                 GameLost = true;
+            }
+            else if (square.PieceType == ESCAPE)
+            {
+                Console.WriteLine("You have successfully escaped!");
+                GridMap[Character.row][Character.column].PieceType = OPEN;
+                GameWon = true;
+                Character.row = row;
+                Character.column = column;
             }
         }
 
