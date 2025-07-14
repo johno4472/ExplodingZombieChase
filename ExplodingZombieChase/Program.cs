@@ -32,11 +32,13 @@ while (true)
         case "d":
             colMove = 1;
             break;
+        case "":
+            break;
         case "q":
             leaveGame = true;
             break;
         default:
-            Console.WriteLine("Invalid entry. Enter w, a, s, or d.");
+            Console.WriteLine("Invalid entry. Enter w, a, s, d, or (just hit enter).");
             game.ResetTurn = true;
             Thread.Sleep(1000);
             break;
