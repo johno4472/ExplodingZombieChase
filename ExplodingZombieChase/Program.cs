@@ -9,6 +9,7 @@ string moveResponse = "";
 int rowMove;
 int colMove;
 game.DisplayGrid();
+bool leaveGame = false;
 
 while (true)
 {
@@ -31,11 +32,20 @@ while (true)
         case "d":
             colMove = 1;
             break;
+        case "q":
+            leaveGame = true;
+            break;
         default:
-            Console.WriteLine("Invalid entry. Enter w, a, s, or d");
+            Console.WriteLine("Invalid entry. Enter w, a, s, or d.");
             game.ResetTurn = true;
             Thread.Sleep(1000);
             break;
+    }
+    if (leaveGame)
+    {
+        Console.WriteLine("Leaving game now");
+        Thread.Sleep(1000);
+        break;
     }
     if (!game.ResetTurn)
     {
@@ -57,8 +67,11 @@ while (true)
             Console.ResetColor();
             break;
         }
+        if (!game.ResetTurn)
+        {
             game.MoveAllZombies();
             game.DisplayGrid();
+        }
         if (game.GameLost)
         {
             Console.WriteLine("You've hit a zombie! You died and your guts exploded everywhere");
