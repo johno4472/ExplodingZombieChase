@@ -4,7 +4,7 @@ using ExplodingZombieChase;
 Console.ResetColor();
 Console.WriteLine("Hello, World!");
 
-Grid game = new Grid(14, 18, .01, .2);
+Grid game = new Grid(14, 18, .05, .2);
 string moveResponse = "";
 int rowMove;
 int colMove;

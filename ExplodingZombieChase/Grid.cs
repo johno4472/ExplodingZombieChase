@@ -53,9 +53,9 @@ namespace ExplodingZombieChase
             
             GridMap[GridMap.Count - 1][GridMap[0].Count - 1].PieceType = ESCAPE;
             double randomNumber;
-            for (int i = 3; i < GridMap.Count - 1; i++)
+            for (int i = 1; i < GridMap.Count - 1; i++)
             {
-                for (int j = 3; j < GridMap[i].Count - 1; j++)
+                for (int j = 1; j < GridMap[i].Count - 1; j++)
                 {
                     randomNumber = ChanceToPlace.NextDouble();
                     if (randomNumber <= percentBarriers)
@@ -64,6 +64,10 @@ namespace ExplodingZombieChase
                     }
                     else if (randomNumber <= percentZombies + percentBarriers)
                     {
+                        if (i <= 3 || j <= 3)
+                        {
+                            continue;
+                        }
                         Zombie zombie = new Zombie(i, j);
                         ZombieList.Add(zombie);
                         GridMap[i][j].PieceType = ZOMBIE;
