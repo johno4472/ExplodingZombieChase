@@ -4,7 +4,7 @@ using ExplodingZombieChase;
 Console.ResetColor();
 Console.WriteLine("Hello, World!");
 
-Grid game = new Grid(14, 18, .05, .2);
+Grid game = new Grid(14, 18, .1, .2);
 string moveResponse = "";
 int rowMove;
 int colMove;
@@ -33,6 +33,7 @@ while (true)
             break;
         default:
             Console.WriteLine("Invalid entry. Enter w, a, s, or d");
+            game.ResetTurn = true;
             Thread.Sleep(1000);
             break;
     }

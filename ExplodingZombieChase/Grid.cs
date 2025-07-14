@@ -20,6 +20,7 @@ namespace ExplodingZombieChase
         public const int ZOMBIEANDPLAYERKILLED = 6;
         public const int ZOMBIEANDDEAD = 7;
         public const int JUSTDIEDANDWILLDIE = 8;
+        public const int CHARACTERANDDEAD = 9;
         public bool GameLost = false;
         public bool ResetTurn = false;
         public bool GameWon = false;
@@ -64,7 +65,7 @@ namespace ExplodingZombieChase
                     }
                     else if (randomNumber <= percentZombies + percentBarriers)
                     {
-                        if (i <= 3 || j <= 3)
+                        if (i <= 4 || j <= 4)
                         {
                             continue;
                         }
@@ -75,11 +76,6 @@ namespace ExplodingZombieChase
                 }
             }
             GridMap[0][0].PieceType = CHARACTER;
-            GridMap[2][2].PieceType = BARRIER;
-            GridMap[2][3].PieceType = BARRIER;
-            GridMap[3][2].PieceType = BARRIER;
-            GridMap[3][1].PieceType = BARRIER;
-            GridMap[1][3].PieceType = BARRIER;
             return this;
         }
 
@@ -149,6 +145,12 @@ namespace ExplodingZombieChase
                             Console.Write($"P{spacing}");
                             Console.ResetColor();
                             break;
+                        case CHARACTERANDDEAD:
+                            Console.BackgroundColor = ConsoleColor.Yellow;
+                            Console.ForegroundColor = ConsoleColor.DarkBlue;
+                            Console.Write($"P{spacing}");
+                            Console.ResetColor();
+                            break;
                         case ESCAPE:
                             Console.BackgroundColor = ConsoleColor.DarkBlue;
                             if (GameWon)
@@ -203,33 +205,38 @@ namespace ExplodingZombieChase
                 return;
             }
             GridSquare square = GridMap[row][column];
-            if (square.PieceType == OPEN)
+            switch (square.PieceType)
             {
-                GridMap[Character.row][Character.column].PieceType = OPEN;
-                Character.row = row;
-                Character.column = column;
-                GridMap[row][column].PieceType = CHARACTER;
-            }
-            else if (square.PieceType == BARRIER)
-            {
-                Console.WriteLine("You cannot move into a barrier. Try again");
-                Thread.Sleep(1000);
-                ResetTurn = true;
-            }
-            else if (square.PieceType == ZOMBIE)
-            {
-                GameLost = true;
-                GridMap[Character.row][Character.column].PieceType = OPEN;
-                Character.row = row;
-                Character.column = column;
-                GridMap[row][column].PieceType = ZOMBIEANDPLAYERKILLED;
-            }
-            else if (square.PieceType == ESCAPE)
-            {
-                GridMap[Character.row][Character.column].PieceType = OPEN;
-                GameWon = true;
-                Character.row = row;
-                Character.column = column;
+                case OPEN:
+                    GridMap[Character.row][Character.column].PieceType = OPEN;
+                    Character.row = row;
+                    Character.column = column;
+                    GridMap[row][column].PieceType = CHARACTER;
+                    break;
+                case OPENANDDEAD:
+                    GridMap[Character.row][Character.column].PieceType = OPEN;
+                    Character.row = row;
+                    Character.column = column;
+                    GridMap[row][column].PieceType = CHARACTERANDDEAD;
+                    break;
+                case BARRIER:
+                    Console.WriteLine("You cannot move into a barrier. Try again");
+                    Thread.Sleep(1000);
+                    ResetTurn = true;
+                    break;
+                case ZOMBIE:
+                    GameLost = true;
+                    GridMap[Character.row][Character.column].PieceType = OPEN;
+                    Character.row = row;
+                    Character.column = column;
+                    GridMap[row][column].PieceType = ZOMBIEANDPLAYERKILLED;
+                    break;
+                case ESCAPE:
+                    GridMap[Character.row][Character.column].PieceType = OPEN;
+                    GameWon = true;
+                    Character.row = row;
+                    Character.column = column;
+                    break;
             }
         }
 
@@ -332,7 +339,7 @@ namespace ExplodingZombieChase
             for (int i = 0; i < ZombieList.Count; i++)
             {
                 Zombie zombie = ZombieList[i];
-                if (zombie.row == row && zombie.column == column)
+                if (zombie.row == row && zombie.column == column && zombie.isAlive)
                 {
                     zombie.isAlive = false;
                     return;
