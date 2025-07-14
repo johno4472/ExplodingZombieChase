@@ -4,7 +4,72 @@ using ExplodingZombieChase;
 Console.ResetColor();
 Console.WriteLine("Hello, World!");
 
-Grid game = new Grid(14, 18, .1, .2);
+Console.WriteLine("Do you want to customize the game (c) or play default (d)?");
+int numRows = 14;
+int numCols = 18;
+double zombieDensity = .1;
+double barrierDensity = .2;
+string response;
+bool beginGameplay = false;
+string customizeResponse = Console.ReadLine();
+switch (customizeResponse)
+{
+    case "d":
+        Console.WriteLine("Playing default gameplay");
+        break;
+    case "c":
+        while (true)
+        {
+            Console.WriteLine($"Your game setup has:\nRows: {numRows}\nColumns: {numCols}\nZombie density: {zombieDensity}\nBarrier density: {barrierDensity}");
+            Console.WriteLine("Do you want to play with those settings? (y) or customize something? (r, c, z, or b)");
+            response = Console.ReadLine() ?? "";
+            try
+            {
+                switch (response)
+                {
+                    case "y":
+                        beginGameplay = true;
+                        break;
+                    case "r":
+                        Console.WriteLine("How many rows do you want? (5-50)");
+                        numRows = Convert.ToInt32(Console.ReadLine());
+                        break;
+                    case "c":
+                        Console.WriteLine("How many rows do you want? (5-30)");
+                        numCols = Convert.ToInt32(Console.ReadLine());
+                        break;
+                    case "z":
+                        Console.WriteLine("What zombie density do you want? (0-1)");
+                        zombieDensity = Convert.ToDouble(Console.ReadLine());
+                        break;
+                    case "b":
+                        Console.WriteLine("What barrier density do you want? (0-1)");
+                        barrierDensity = Convert.ToDouble(Console.ReadLine());
+                        break;
+                    default:
+                        Console.WriteLine("Invalid response. Type only one of the following: y, r, c, z, b");
+                        Thread.Sleep(500);
+                        break;
+                }
+            }
+            catch
+            {
+                Console.WriteLine("You gave an invalide numerical response. Look at the limits and try again");
+            }
+            if (beginGameplay)
+            {
+                break;
+            }
+            
+
+        }
+        break;
+    default:
+        Console.WriteLine("No valid answer given so we're setting you up with default settings");
+        break;
+}
+
+Grid game = new Grid(numRows, numCols, zombieDensity, barrierDensity);
 string moveResponse = "";
 int rowMove;
 int colMove;
