@@ -95,6 +95,7 @@ while (true)
     int colMove;
     game.DisplayGrid();
     bool leaveGame = false;
+    WinPossibility possible = new WinPossibility();
 
     while (true)
     {
@@ -122,13 +123,35 @@ while (true)
             case "q":
                 leaveGame = true;
                 break;
-            case "i":
-
-            default:
-                Console.WriteLine("Invalid entry. Enter w, a, s, d, or (just hit enter).");
+            case "pw":
+                if (possible.CheckIfPossibleToWin(game))
+                {
+                    Console.WriteLine("It's still possible to win in less than 30 turns!");
+                    possible.PrintSuccessPath();
+                }
+                else
+                {
+                    Console.WriteLine("Not possible to win in 30 turns");
+                }
                 game.ResetTurn = true;
-                Thread.Sleep(1000);
                 break;
+            case "pd":
+                if (possible.CheckIfPossibleToWin(game, true))
+                {
+                    Console.WriteLine("It's still possible to not be dead in less than 30 turns!");
+                    possible.PrintSuccessPath();
+                }
+                else
+                {
+                    Console.WriteLine("Not possible to not be dead in 30 turns, considering you don't sit and skip turns while zombies don't move");
+                }
+                game.ResetTurn = true;
+                break;
+            default:
+            Console.WriteLine("Invalid entry. Enter w, a, s, d, or (just hit enter).");
+            game.ResetTurn = true;
+            Thread.Sleep(1000);
+            break;
         }
         if (leaveGame)
         {
@@ -160,6 +183,7 @@ while (true)
             {
                 game.MoveAllZombies();
                 game.DisplayGrid();
+                game.Turns += 1;
             }
             if (game.GameLost)
             {

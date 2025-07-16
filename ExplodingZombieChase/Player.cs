@@ -16,5 +16,10 @@ namespace ExplodingZombieChase
             this.row = row;
             this.column = column;
         }
+
+        public Player Clone()
+        {
+            return new Player(this.row, this.column);
+        }
     }
 }

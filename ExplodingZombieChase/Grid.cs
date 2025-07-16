@@ -26,14 +26,18 @@ namespace ExplodingZombieChase
         public bool GameWon = false;
         public List<Zombie> ZombieList = [];
         public Player Character;
+        public int Turns = 0;
         
-        public Grid(int rows, int columns, double percentZombies, double percentBarriers)
-        {
-            GridMap = [];
-            ChanceToPlace = new Random();
-            InitializeGrid(rows, columns);
-            PlaceAllPieces(percentZombies, percentBarriers);
-            Character = new Player(0, 0);
+        public Grid(int rows = 14, int columns = 18, double percentZombies = .1, double percentBarriers = .2, bool initialize = true)
+        {           
+            if (initialize)
+            {
+                GridMap = [];
+                ChanceToPlace = new Random();
+                InitializeGrid(rows, columns);
+                PlaceAllPieces(percentZombies, percentBarriers);
+                Character = new Player(0, 0);
+            }
         }
 
         public Grid InitializeGrid(int rows = 14, int columns = 18)
@@ -196,16 +200,19 @@ namespace ExplodingZombieChase
             Console.WriteLine();
         }
 
-        public void MoveCharacter(int rowMove, int colMove)
+        public bool MoveCharacter(int rowMove, int colMove, bool test = false)
         {
             int row = Character.row + rowMove;
             int column = Character.column + colMove;
             if (!IsValidCoord(row, column))
             {
-                Console.WriteLine("You have tried to move out of bounds. Try again");
-                Thread.Sleep(1000);
+                if (!test)
+                {
+                    Console.WriteLine("You have tried to move out of bounds. Try again");
+                    Thread.Sleep(1000);
+                }
                 ResetTurn = true;
-                return;
+                return false;
             }
             GridSquare square = GridMap[row][column];
             switch (square.PieceType)
@@ -223,10 +230,13 @@ namespace ExplodingZombieChase
                     GridMap[row][column].PieceType = CHARACTERANDDEAD;
                     break;
                 case BARRIER:
-                    Console.WriteLine("You cannot move into a barrier. Try again");
-                    Thread.Sleep(1000);
+                    if (!test)
+                    {
+                        Console.WriteLine("You cannot move into a barrier. Try again");
+                        Thread.Sleep(1000);
+                    }
                     ResetTurn = true;
-                    break;
+                    return false;
                 case ZOMBIE:
                     GameLost = true;
                     GridMap[Character.row][Character.column].PieceType = OPEN;
@@ -241,12 +251,13 @@ namespace ExplodingZombieChase
                     Character.column = column;
                     break;
             }
+            return true;
         }
 
-        public void MoveZombie(Zombie zombie)
+        public bool MoveZombie(Zombie zombie)
         {
-            int row = zombie.row;
-            int column = zombie.column;
+            int row = zombie.Row;
+            int column = zombie.Column;
             int rowDifference = Character.row - row;
             int colDifference = Character.column - column;
             if (rowDifference < 0)
@@ -267,9 +278,9 @@ namespace ExplodingZombieChase
             }
             if (!IsValidCoord(row, column))
             {
-                return;
+                return false;
             }
-            GridSquare oldSquare = GridMap[zombie.row][zombie.column];
+            GridSquare oldSquare = GridMap[zombie.Row][zombie.Column];
             int pieceType = GridMap[row][column].PieceType;
             if (pieceType != BARRIER && pieceType != ESCAPE)
             {
@@ -285,56 +296,63 @@ namespace ExplodingZombieChase
                 {
                     oldSquare.PieceType = JUSTDIEDANDWILLDIE;
                 }
-                else
-                {
-                    throw (new Exception());
-                }
+               // else
+               // {
+               //     
+               //     //throw (new Exception());
+               // }
             }
             switch (pieceType)
             {
                 case BARRIER:
                 case ESCAPE:
-                    break;
+                    return false;
                 case OPEN:
-                    zombie.row = row;
-                    zombie.column = column;
+                    zombie.Row = row;
+                    zombie.Column = column;
                     GridMap[row][column].PieceType = ZOMBIE;
                     break;
                 case ZOMBIE:
                 case JUSTDIEDANDWILLDIE:
                 case ZOMBIEANDDEAD:
                     FindAndKillZombie(row, column);
-                    zombie.row = row;
-                    zombie.column = column;
-                    zombie.isAlive = false;
+                    zombie.Row = row;
+                    zombie.Column = column;
+                    zombie.IsAlive = false;
                     GridMap[row][column].PieceType = JUSTDIEDANDWILLDIE;
                     break;
                 case OPENANDDEAD:
-                    zombie.row = row;
-                    zombie.column = column;
+                    zombie.Row = row;
+                    zombie.Column = column;
                     GridMap[row][column].PieceType = ZOMBIEANDDEAD;
                     break;
                 case CHARACTER:
-                    zombie.row = row;
-                    zombie.column = column;
+                    zombie.Row = row;
+                    zombie.Column = column;
                     GridMap[row][column].PieceType = ZOMBIEANDPLAYERKILLED;
                     GameLost = true;
                     break;
             }
+            return true;
 
         }
 
-        public void MoveAllZombies()
+        public bool MoveAllZombies()
         {
             Zombie zombie;
+            bool zombiesMoved = false;
             for (int i = 0; i < ZombieList.Count; i++)
             {
                 zombie = ZombieList[i];
-                if (zombie.isAlive)
+                if (zombie.IsAlive)
                 {
-                    MoveZombie(zombie);
+                    if (MoveZombie(zombie))
+                    {
+                        zombiesMoved = true;
+                    }
                 }
             }
+            return false;
         }
 
         public void FindAndKillZombie(int row, int column)
@@ -342,12 +360,38 @@ namespace ExplodingZombieChase
             for (int i = 0; i < ZombieList.Count; i++)
             {
                 Zombie zombie = ZombieList[i];
-                if (zombie.row == row && zombie.column == column && zombie.isAlive)
+                if (zombie.Row == row && zombie.Column == column && zombie.IsAlive)
                 {
-                    zombie.isAlive = false;
+                    zombie.IsAlive = false;
                     return;
                 }
             }
+        }
+
+        public Grid Clone()
+        {
+            Grid newGrid = new Grid(initialize: false);
+
+            newGrid.GridMap = new List<List<GridSquare>>();
+            foreach (var row in this.GridMap)
+            {
+                var newRow = new List<GridSquare>();
+                foreach (var square in row)
+                {
+                    newRow.Add(square.Clone());
+                }
+                newGrid.GridMap.Add(newRow);
+            }
+
+            newGrid.Character = this.Character.Clone();
+
+            newGrid.ZombieList = new List<Zombie>();
+
+            foreach ( var zombie in this.ZombieList)
+            {
+                newGrid.ZombieList.Add(zombie.Clone());
+            }
+            return newGrid;
         }
     }
 }

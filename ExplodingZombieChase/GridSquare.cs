@@ -13,5 +13,14 @@ namespace ExplodingZombieChase
         public int PieceType { get; set; } = 0;
 
         public bool DeadZombiePresent { get; set; } = false;
+
+        public GridSquare Clone()
+        {
+            return new GridSquare
+            {
+                PieceType = PieceType,
+                DeadZombiePresent = DeadZombiePresent
+            };
+        }
     }
 }
