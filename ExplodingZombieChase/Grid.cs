@@ -83,6 +83,7 @@ namespace ExplodingZombieChase
             GridMap[2][2].PieceType = BARRIER;
             GridMap[1][2].PieceType = BARRIER;
             GridMap[2][1].PieceType = BARRIER;
+            GridMap[1][1].PieceType = OPEN;
             return this;
         }
 
@@ -95,8 +96,9 @@ namespace ExplodingZombieChase
             return true;
         }
 
-        public void DisplayGrid()
+        public int DisplayGrid()
         {
+            int iterationCounter = 0;
             Console.WriteLine();
             Console.Write("  ");
             for (int i = 0; i < GridMap[0].Count; i++)
@@ -112,6 +114,7 @@ namespace ExplodingZombieChase
                 string spacing = " ";
                 for (int j = 0; j < GridMap[i].Count; j++)
                 {
+                    iterationCounter += 1;
                     if (j == GridMap[i].Count - 1)
                     {
                         spacing = "";
@@ -198,6 +201,7 @@ namespace ExplodingZombieChase
                 }
             }
             Console.WriteLine();
+            return iterationCounter;
         }
 
         public bool MoveCharacter(int rowMove, int colMove, bool test = false)
@@ -352,7 +356,7 @@ namespace ExplodingZombieChase
                     }
                 }
             }
-            return false;
+            return zombiesMoved;
         }
 
         public void FindAndKillZombie(int row, int column)
