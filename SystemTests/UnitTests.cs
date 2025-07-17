@@ -192,7 +192,7 @@ namespace SystemTests
         public void WinPossibleIfAllDirectionsNeeded()
         {
             //Arrange
-            Grid game = new Grid(14, 18, percentZombies: 0);
+            Grid game = new Grid(14, 18, percentZombies: 0, percentBarriers: 0);
             game.Character.row = 11;
             game.Character.column = 17;
             game.ZombieList.Clear();

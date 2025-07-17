@@ -1,0 +1,32 @@
+Here's how Exploding Zombie Chase works:
+
+You wake up in a sketchy warehouse somewhere, and just need to make 
+your way to the escape hatch at the opposite corner.
+There's just one problem...
+
+Zombies!!
+
+Between you and the hatch are multiple zombies that can sense your every 
+move, and move closer to you every second.
+
+Your disadvantage: You can only move up horizontally or vertically, and 
+zombies can move diagonally.
+
+Your advantage: You know exactly what the zombies will do. And this is how:
+- Zombies will ALWAYS try to move one move diagonally in your direction 
+  (they can squeeze between blocks if the diagonal spot is open), unless you 
+  are exactly in line with them vertically or horizontally, in that case they
+  will move one space in your direction
+- That means that if a barrier stands between the zombie's path to you, it 
+  will stand there and wait until the path to you no longer is on the other 
+  side of a barrier
+- Also, these are exploding zombies! If two zombies collide on their way to 
+  you, they explode!
+
+See if you can survive the zombies, and get them to explode so they open up a path to safety!
+Basic controls are:
+w - up
+a - left
+d - right
+s - down
+q - quit.
