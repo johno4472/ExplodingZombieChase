@@ -69,7 +69,7 @@ namespace ExplodingZombieChase
                     }
                     else if (randomNumber <= percentZombies + percentBarriers)
                     {
-                        if (i <= 4 && j <= 4)
+                        if ((i <= 4 && j <= 4) || i <= 1 || j <= 1 )
                         {
                             continue;
                         }
